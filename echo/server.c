@@ -17,6 +17,16 @@ again:
     }
 }
 
+void
+sig_chld(int signo)
+{
+	pid_t	pid;
+	int		stat;
+
+	pid = wait(&stat);
+	printf("child %d terminated\n", pid);
+	return;
+}
 
 int main(int argc, char* argv[])
 {
@@ -31,6 +41,8 @@ int main(int argc, char* argv[])
     servaddr.sin_port = htons(SERV_PORT);
 
     Bind(listenfd, (SA*)&servaddr, sizeof(servaddr));
+
+    Signal(SIGCHLD, sig_chld);
 
     Listen(listenfd, LISTENQ);
 
